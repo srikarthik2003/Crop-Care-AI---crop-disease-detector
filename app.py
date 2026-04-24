@@ -6,11 +6,13 @@ import time
 import base64
 import pathlib
 import datetime as dt
+import hashlib
 import numpy as np
 import pandas as pd
 import streamlit as st
 from PIL import Image, ImageOps
 
+import requests
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 
@@ -20,8 +22,14 @@ from tensorflow.keras.models import load_model
 st.set_page_config(page_title="Crop Care • AI", page_icon="🌱", layout="wide")
 
 # ---- Paths (edit these) ----
-MODEL_PATH = "D:\cropCare\mobileNet_crop_disease_model_v1 (1).h5"          # your trained .h5 model
-CLASSES_TXT = "D:\cropCare\Classes.txt "          # optional: one class per line (in training order)
+# For local dev: set this to your local .h5 file path
+LOCAL_MODEL_PATH = os.path.join(os.path.dirname(__file__), "mobileNet_crop_disease_model_v1 (1).h5")
+
+# Remote model URL (set via Streamlit Cloud Secrets as MODEL_URL)
+# Leave empty to use LOCAL_MODEL_PATH
+MODEL_URL = os.getenv("MODEL_URL", "")
+
+CLASSES_TXT = os.path.join(os.path.dirname(__file__), "Classes.txt")  # one class per line (in training order)
 CLASSES_JSON = "classes.json"         # optional: {"class_names": [...]}
 PRED_LOG = "predictions_log.csv"      # dashboard data store
 
@@ -128,10 +136,32 @@ def log_prediction(filename, pred_class, confidence, healthy_flag, crop_type):
     df.to_csv(PRED_LOG, index=False)
 
 # ======================
+# MODEL DOWNLOADER
+# ======================
+def get_model_path() -> str:
+    """
+    Return path to local model file.
+    Downloads from MODEL_URL to LOCAL_MODEL_PATH if needed.
+    """
+    if MODEL_URL and not os.path.exists(LOCAL_MODEL_PATH):
+        st.info("Downloading model for the first time… this may take a moment.")
+        try:
+            response = requests.get(MODEL_URL, timeout=300)
+            response.raise_for_status()
+            with open(LOCAL_MODEL_PATH, "wb") as f:
+                f.write(response.content)
+            st.success("Model downloaded successfully.")
+        except Exception as e:
+            raise RuntimeError(f"Failed to download model from {MODEL_URL}: {e}")
+    return LOCAL_MODEL_PATH
+
+
+# ======================
 # CACHED LOADERS
 # ======================
 @st.cache_resource(show_spinner="Loading model…")
-def load_model_cached(path: str):
+def load_model_cached():
+    path = get_model_path()
     return load_model(path)
 
 @st.cache_resource
@@ -183,11 +213,12 @@ if choice == pages["Home"]:
     colA, colB = st.columns([2, 1])
     with colB:
         st.caption("Model file")
-        st.code(MODEL_PATH)
-        if not os.path.exists(MODEL_PATH):
-            st.error("Model file not found. Place your .h5 at the path above.")
-        else:
-            model = load_model_cached(MODEL_PATH)
+        display_path = MODEL_URL if MODEL_URL else LOCAL_MODEL_PATH
+        st.code(display_path)
+        try:
+            model = load_model_cached()
+        except Exception as e:
+            st.error(f"Model unavailable: {e}")
 
     uploaded = st.file_uploader("Upload image", type=["jpg", "jpeg", "png", "bmp", "webp"])
 
