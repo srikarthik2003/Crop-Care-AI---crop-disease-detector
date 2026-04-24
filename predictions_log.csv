@@ -1,0 +1,15 @@
+timestamp,filename,predicted_class,confidence,healthy,crop_type
+2025-08-13T11:00:32.518073,Gray Mold (Botrytis) 2.jpg,Fruit Crop Diseases,0.2795867919921875,False,Fruit
+2025-08-13T12:31:44.685678,3.jpg,Fruit Crop Diseases,0.2797051966190338,False,Fruit
+2025-08-13T12:35:51.935556,download.jpeg,Rice plant Diseases,0.2703182101249695,False,Rice
+2025-08-13T12:36:23.198561,download (1).jpeg,Fruit Crop Diseases,0.2740143835544586,False,Fruit
+2025-08-13T12:36:33.435671,download (1).jpeg,Fruit Crop Diseases,0.2740143835544586,False,Fruit
+2025-08-14T08:57:38.059243,Gray Mold (Botrytis) 5.jpg,Cotton Crop Diseases,0.1668154299259185,False,Cotton
+2025-08-14T09:16:56.610619,download.jpeg,Rice plant Diseases,0.2703182101249695,False,Rice
+2025-08-14T09:17:20.438098,Citrus Canker-2.jpg,Fruit Crop Diseases,0.2351083606481552,False,Fruit
+2025-08-14T09:18:07.880271,Sigatoka Leaf Spot (Banana)-5.jpeg,Fruit Crop Diseases,0.2068324089050293,False,Fruit
+2025-08-14T09:18:22.550948,Sigatoka Leaf Spot (Banana)-5.jpeg,Fruit Crop Diseases,0.2068324089050293,False,Fruit
+2025-08-14T09:18:46.619252,Papaya Ring Spot Virus-1.jpg,Fruit Crop Diseases,0.2701134085655212,False,Fruit
+2025-08-19T03:51:15.891975,Papaya Ring Spot Virus-2.jpeg,Fruit Crop Diseases,0.2401429414749145,False,Fruit
+2025-08-19T07:17:31.818727,Papaya Ring Spot Virus-6.jpg,Fruit Crop Diseases,0.2163133174180984,False,Fruit
+2026-04-24T08:51:30.519767,rice.jpg,Rice plant Diseases,0.20757436752319336,False,Rice

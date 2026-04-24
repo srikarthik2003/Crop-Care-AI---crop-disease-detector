@@ -1,0 +1,8 @@
+Corn
+Cotton
+Fruit
+Pulse
+Rice 
+Tobacco
+Vegetable
+Wheat 
