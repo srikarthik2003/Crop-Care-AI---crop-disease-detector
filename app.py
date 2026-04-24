@@ -22,6 +22,10 @@ from tensorflow.keras.models import load_model
 # ======================
 st.set_page_config(page_title="Crop Care • AI", page_icon="🌱", layout="wide")
 
+# Generate a unique session ID for this user (persists during their session)
+if "session_id" not in st.session_state:
+    st.session_state.session_id = hashlib.sha256(os.urandom(32)).hexdigest()[:12]
+
 # ---- Paths (edit these) ----
 # For local dev: set this to your local .h5 file path
 LOCAL_MODEL_PATH = os.path.join(os.path.dirname(__file__), "model.h5")
@@ -122,6 +126,7 @@ def crop_type_from_class(class_name: str) -> str:
 
 def log_prediction(filename, pred_class, confidence, healthy_flag, crop_type):
     row = {
+        "session_id": st.session_state.session_id,
         "timestamp": dt.datetime.utcnow().isoformat(),
         "filename": filename,
         "predicted_class": pred_class,
@@ -302,6 +307,8 @@ elif choice == pages["Dashboard"]:
         st.info("No predictions logged yet. Make some predictions on the Home page first.")
     else:
         df = pd.read_csv(PRED_LOG)
+        # Filter to only this user's session
+        df = df[df["session_id"] == st.session_state.session_id]
         if df.empty:
             st.info("No predictions yet.")
         else:
