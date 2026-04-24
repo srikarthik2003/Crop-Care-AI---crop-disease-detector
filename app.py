@@ -13,6 +13,7 @@ import streamlit as st
 from PIL import Image, ImageOps
 
 import requests
+import gdown
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 
@@ -146,10 +147,11 @@ def get_model_path() -> str:
     if MODEL_URL and not os.path.exists(LOCAL_MODEL_PATH):
         st.info("Downloading model for the first time… this may take a moment.")
         try:
-            response = requests.get(MODEL_URL, timeout=300)
-            response.raise_for_status()
-            with open(LOCAL_MODEL_PATH, "wb") as f:
-                f.write(response.content)
+            import os
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(LOCAL_MODEL_PATH) or ".", exist_ok=True)
+            # Use gdown for reliable Google Drive downloads
+            gdown.download(MODEL_URL, LOCAL_MODEL_PATH, quiet=False)
             st.success("Model downloaded successfully.")
         except Exception as e:
             raise RuntimeError(f"Failed to download model from {MODEL_URL}: {e}")
@@ -288,7 +290,6 @@ if choice == pages["Home"]:
                 st.warning("Signs of disease detected. Inspect multiple leaves; consider targeted treatment and isolate if necessary.")
 
     st.markdown("---")
-    st.caption("Tip: Put a `classes.txt` (one label per line) or `classes.json` with `{ 'class_names': [...] }` next to the model to avoid manual edits.")
 
 # ======================
 # DASHBOARD

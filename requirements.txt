@@ -5,3 +5,4 @@ matplotlib>=3.0.0
 streamlit>=1.40.0
 tensorflow>=2.18.0,<2.19.0
 requests>=2.31.0
+gdown>=5.0.0
