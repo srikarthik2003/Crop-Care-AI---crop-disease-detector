@@ -385,7 +385,7 @@ It leverages transfer learning (MobileNetV2 / VGG variants) and careful fine-tun
 - On-device continual learning and active learning loops.
 - Explainability overlays (heatmaps) to show “why” a decision was made.
 """)
-    st.info("Have ideas or need a custom feature? Add a feedback button and store messages to a sheet or database.")
+    
 
 st.markdown(
     """
