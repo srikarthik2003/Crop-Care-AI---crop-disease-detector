@@ -24,7 +24,7 @@ st.set_page_config(page_title="Crop Care • AI", page_icon="🌱", layout="wide
 
 # ---- Paths (edit these) ----
 # For local dev: set this to your local .h5 file path
-LOCAL_MODEL_PATH = os.path.join(os.path.dirname(__file__), "mobileNet_crop_disease_model_v1 (1).h5")
+LOCAL_MODEL_PATH = os.path.join(os.path.dirname(__file__), "model.h5")
 
 # Remote model URL (set via Streamlit Cloud Secrets as MODEL_URL)
 # Leave empty to use LOCAL_MODEL_PATH
@@ -144,16 +144,23 @@ def get_model_path() -> str:
     Return path to local model file.
     Downloads from MODEL_URL to LOCAL_MODEL_PATH if needed.
     """
-    if MODEL_URL and not os.path.exists(LOCAL_MODEL_PATH):
-        st.info("Downloading model for the first time… this may take a moment.")
-        try:
-            # Ensure directory exists
-            os.makedirs(os.path.dirname(LOCAL_MODEL_PATH) or ".", exist_ok=True)
-            # Use gdown for reliable Google Drive downloads
-            gdown.download(MODEL_URL, LOCAL_MODEL_PATH, quiet=False)
-            st.success("Model downloaded successfully.")
-        except Exception as e:
-            raise RuntimeError(f"Failed to download model from {MODEL_URL}: {e}")
+    if MODEL_URL:
+        is_valid = os.path.exists(LOCAL_MODEL_PATH) and os.path.getsize(LOCAL_MODEL_PATH) > 1_000_000
+        if not is_valid:
+            st.info("Downloading model for the first time… this may take a moment.")
+            try:
+                os.makedirs(os.path.dirname(LOCAL_MODEL_PATH) or ".", exist_ok=True)
+                if "drive.google.com" in MODEL_URL:
+                    gdown.download(MODEL_URL, LOCAL_MODEL_PATH, quiet=False)
+                else:
+                    response = requests.get(MODEL_URL, timeout=300, stream=True)
+                    response.raise_for_status()
+                    with open(LOCAL_MODEL_PATH, "wb") as f:
+                        for chunk in response.iter_content(chunk_size=8192 * 1024):
+                            f.write(chunk)
+                st.success("Model downloaded successfully.")
+            except Exception as e:
+                raise RuntimeError(f"Failed to download model from {MODEL_URL}: {e}")
     return LOCAL_MODEL_PATH
 
 
