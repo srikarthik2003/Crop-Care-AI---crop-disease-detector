@@ -218,15 +218,10 @@ if choice == pages["Home"]:
     model = None
     class_names = get_class_names_cached()
 
-    colA, colB = st.columns([2, 1])
-    with colB:
-        st.caption("Model file")
-        display_path = MODEL_URL if MODEL_URL else LOCAL_MODEL_PATH
-        st.code(display_path)
-        try:
-            model = load_model_cached()
-        except Exception as e:
-            st.error(f"Model unavailable: {e}")
+    try:
+        model = load_model_cached()
+    except Exception as e:
+        st.error(f"Model unavailable: {e}")
 
     uploaded = st.file_uploader("Upload image", type=["jpg", "jpeg", "png", "bmp", "webp"])
 
