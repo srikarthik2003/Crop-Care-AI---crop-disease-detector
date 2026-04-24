@@ -147,7 +147,6 @@ def get_model_path() -> str:
     if MODEL_URL and not os.path.exists(LOCAL_MODEL_PATH):
         st.info("Downloading model for the first time… this may take a moment.")
         try:
-            import os
             # Ensure directory exists
             os.makedirs(os.path.dirname(LOCAL_MODEL_PATH) or ".", exist_ok=True)
             # Use gdown for reliable Google Drive downloads
